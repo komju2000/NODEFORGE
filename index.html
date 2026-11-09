@@ -1,0 +1,285 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Даниил — Blueprint Developer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: factory floor sheet. Narrow reading column, hazard-stripe dividers, case study as a work order, logic shown as Blueprint-style node chains. */
+:root{
+  --bg:#eceae6; --panel:#f7f6f3; --ink:#1d1f22; --muted:#5d6166; --line:#cfccc5;
+  --hazard:#e8890c; --hazard-ink:#7a4300; --node:#23272d; --node-head:#2f5d8a; --node-func:#3b6e4a; --node-event:#8a2f2f; --wire:#e7e9ec;
+  --display:"Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", Roboto, sans-serif;
+  --mono:"IBM Plex Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17191c; --panel:#1f2226; --ink:#e9e7e2; --muted:#a2a5a9; --line:#34383d;
+  --hazard:#f29a24; --hazard-ink:#f6b65e; --node:#2a2e34; --node-head:#3a6b9b; --node-func:#457a54; --node-event:#9a3c3c; --wire:#e7e9ec; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17191c; --panel:#1f2226; --ink:#e9e7e2; --muted:#a2a5a9; --line:#34383d;
+  --hazard:#f29a24; --hazard-ink:#f6b65e; --node:#2a2e34; --node-head:#3a6b9b; --node-func:#457a54; --node-event:#9a3c3c; --wire:#e7e9ec; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:900px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.05;letter-spacing:.01em}
+h2{font-size:clamp(30px,5vw,42px);text-transform:uppercase}
+h3{font-size:22px;text-transform:uppercase;letter-spacing:.03em}
+p{margin:0;max-width:66ch}
+a{color:inherit}
+.mono{font-family:var(--mono)}
+.label{font:500 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.stripe{height:10px;background:repeating-linear-gradient(-45deg,var(--hazard) 0 14px,var(--ink) 14px 28px);border-radius:2px}
+section{display:grid;gap:20px;padding-block:44px 8px}
+
+/* top bar */
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:18px 14px}
+.lang{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.lang button{font:500 13px var(--mono);background:transparent;color:var(--muted);border:0;padding:6px 12px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.lang button:focus-visible,.copy:focus-visible{outline:2px solid var(--hazard);outline-offset:2px}
+
+/* hero */
+.hero{display:grid;gap:18px;padding-block:28px 34px}
+.hero h1{font-size:clamp(56px,11vw,104px);font-weight:800;text-transform:uppercase}
+.hero h1 .dot{color:var(--hazard);font-weight:800}
+.role{font:600 clamp(18px,2.6vw,22px)/1.3 var(--body)}
+.lead{color:var(--muted);font-size:17px}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font:500 13px/1 var(--mono);padding:7px 10px;border:1px solid var(--line);border-radius:4px;background:var(--panel)}
+.tag.hot{border-color:var(--hazard);color:var(--hazard-ink)}
+
+/* contacts */
+.contacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.contact{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;min-width:0}
+.contact div{min-width:0}
+.contact .v{font:500 15px var(--mono);overflow-wrap:anywhere;user-select:all}
+.copy{font:500 12px var(--mono);background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:4px;padding:6px 9px;cursor:pointer;flex-shrink:0}
+.copy:hover{border-color:var(--hazard)}
+
+/* skills */
+.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.skill{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;gap:10px;align-content:start}
+.meter{display:flex;gap:4px}
+.meter i{height:6px;flex:1;border-radius:1px;background:var(--line)}
+.meter i.on{background:var(--hazard)}
+.skill ul{margin:0;padding-left:18px;color:var(--muted);font-size:15px}
+.skill .lvl{font:500 12px var(--mono);color:var(--muted)}
+
+/* work order */
+.order{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.order-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 20px;padding:18px 20px;border-bottom:1px dashed var(--line)}
+.order-head dl{display:flex;flex-wrap:wrap;gap:6px 22px;margin:0}
+.order-head dt{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.order-head dd{margin:0;font:500 14px var(--mono)}
+.order figure{margin:0}
+.order figure video{display:block;width:100%;height:auto;background:#000}
+.order img{display:block;width:100%;height:auto}
+figcaption{font-size:13px;color:var(--muted);padding:8px 20px 0}
+.order-body{display:grid;gap:22px;padding:22px 20px 24px}
+.loop{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font:500 13px var(--mono)}
+.loop b{background:var(--ink);color:var(--bg);padding:6px 9px;border-radius:3px;font-weight:500}
+.loop span{color:var(--hazard)}
+
+/* blueprint chains */
+.graph{background:#1b1e22;border-radius:6px;padding:18px 16px;overflow-x:auto}
+.chain{display:flex;align-items:center;gap:0;min-width:max-content}
+.node{background:var(--node);border:1px solid #444a52;border-radius:6px;min-width:128px;color:#e9ebee;font:12px/1.35 var(--mono);box-shadow:0 2px 0 #0006}
+.node .h{padding:5px 9px;border-radius:5px 5px 0 0;background:var(--node-head);font-weight:500}
+.node.ev .h{background:var(--node-event)}
+.node.fn .h{background:var(--node-func)}
+.node .b{padding:6px 9px;color:#b9bec5}
+.wire{width:26px;height:2px;background:var(--wire);position:relative;flex-shrink:0}
+.wire::after{content:"";position:absolute;right:-1px;top:-4px;border:5px solid transparent;border-left-color:var(--wire);border-right:0}
+.graph-note{font-size:14px;color:var(--muted);margin-top:-8px}
+
+.decisions{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.decision{border-top:3px solid var(--hazard);padding-top:10px;display:grid;gap:6px}
+.decision p{font-size:15px;color:var(--muted)}
+.fix{display:grid;gap:8px;background:var(--bg);border-radius:6px;padding:14px 16px;font-size:15px}
+.fix p{max-width:none}
+
+.side{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:720px){.side{grid-template-columns:1.1fr 1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px 20px;display:grid;gap:10px;align-content:start}
+.status{justify-self:start;font:500 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:5px 8px;border-radius:3px;background:var(--hazard);color:#1d1f22}
+.card ul{margin:0;padding-left:18px;color:var(--muted);font-size:15px}
+footer{padding-block:40px 0;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+[data-l]{display:none}
+html[lang="ru"] [data-l="ru"], html[lang="en"] [data-l="en"]{display:revert}
+@media (prefers-reduced-motion:no-preference){.copy{transition:border-color .15s}}
+</style>
+
+<div class="wrap">
+  <div class="bar">
+    <span class="label">Portfolio · UE 5.5</span>
+    <div class="lang" role="group" aria-label="Language">
+      <button id="btn-ru" type="button" aria-pressed="true">RU</button>
+      <button id="btn-en" type="button" aria-pressed="false">EN</button>
+    </div>
+  </div>
+  <div class="stripe"></div>
+
+  <header class="hero">
+    <h1><span data-l="ru">Даниил</span><span data-l="en">Daniil</span><b class="dot">.</b></h1>
+    <p class="role"><span data-l="ru">Blueprint-разработчик в Unreal Engine 5. Ищу стажировку или junior-позицию в инди-студии, удалённо.</span><span data-l="en">Unreal Engine 5 Blueprint developer. Looking for a remote internship or junior role at an indie studio.</span></p>
+    <p class="lead"><span data-l="ru">Собираю геймплейные системы на Blueprints: заказы, машины, переноску предметов, UI. Делаю их на данных и событиях, без Event Tick. Сам рисую простой UI в Figma и моделирую в Blender.</span><span data-l="en">I build gameplay systems in Blueprints: orders, machines, item carrying, UI. I keep them data-driven and event-based, with no Event Tick. I also draw simple UI in Figma and model in Blender.</span></p>
+    <div class="tags">
+      <span class="tag hot">UE5 Blueprints</span><span class="tag">UMG</span><span class="tag">Enhanced Input</span><span class="tag">Data Assets</span><span class="tag">Blueprint Interfaces</span><span class="tag">Figma</span><span class="tag">Blender</span><span class="tag">Git / Diversion</span>
+    </div>
+  </header>
+
+  <div class="contacts">
+    <div class="contact"><div><div class="label">Email</div><div class="v" id="c-mail">coffidino5@gmail.com</div></div><button class="copy" type="button" data-copy="c-mail">copy</button></div>
+    <div class="contact"><div><div class="label">Telegram</div><div class="v" id="c-tg">@Komju0</div></div><button class="copy" type="button" data-copy="c-tg">copy</button></div>
+    <div class="contact"><div><div class="label" data-l="ru">Телефон</div><div class="label" data-l="en">Phone</div><div class="v" id="c-ph">+7 991 319-96-14</div></div><button class="copy" type="button" data-copy="c-ph">copy</button></div>
+  </div>
+
+  <section>
+    <span class="label" data-l="ru">Навыки</span><span class="label" data-l="en">Skills</span>
+    <div class="skills">
+      <div class="skill">
+        <h3>Unreal Engine 5</h3>
+        <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div>
+        <span class="lvl" data-l="ru">основной инструмент</span><span class="lvl" data-l="en">main tool</span>
+        <ul data-l="ru"><li>Blueprints: события, функции, макросы, наследование</li><li>Primary Data Assets и структуры для контента</li><li>Blueprint Interfaces вместо цепочек Cast</li><li>UMG: виджеты, обновление по событию</li><li>Таймеры вместо Tick, физика, коллизии</li></ul>
+        <ul data-l="en"><li>Blueprints: events, functions, macros, inheritance</li><li>Primary Data Assets and structs for content</li><li>Blueprint Interfaces instead of Cast chains</li><li>UMG: widgets updated by events</li><li>Timers instead of Tick, physics, collision</li></ul>
+      </div>
+      <div class="skill">
+        <h3>Blender</h3>
+        <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div>
+        <span class="lvl" data-l="ru">средний уровень</span><span class="lvl" data-l="en">intermediate</span>
+        <ul data-l="ru"><li>Моделирование пропсов и окружения</li><li>Оптимизация моделей под игру: полигонаж, чистая сетка</li><li>Экспорт в Unreal</li><li>Текстурирование: изучаю, пока пробел</li></ul>
+        <ul data-l="en"><li>Prop and environment modeling</li><li>Game-ready optimization: polycount, clean topology</li><li>Export to Unreal</li><li>Texturing: currently learning</li></ul>
+      </div>
+      <div class="skill">
+        <h3>Figma</h3>
+        <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div>
+        <span class="lvl" data-l="ru">базовый уровень</span><span class="lvl" data-l="en">basic</span>
+        <ul data-l="ru"><li>Игровые панели и рамки для HUD</li><li>Иконки предметов</li><li>Перенос в UMG</li></ul>
+        <ul data-l="en"><li>Game panels and HUD frames</li><li>Item icons</li><li>Moving designs into UMG</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="stripe"></div>
+    <span class="label" data-l="ru">Главный проект</span><span class="label" data-l="en">Main project</span>
+    <h2>Industrial Chaos</h2>
+    <p><span data-l="ru">Хаотичная фабрика от третьего лица. Игрок носит руду к машинам, переплавляет её в слитки, собирает заказ в коробку и сдаёт на точку, пока таймер заказа идёт. Полы со льдом, маслом и лавой мешают. Прототип, сделан один, только на Blueprints.</span><span data-l="en">A chaotic third-person factory. The player carries ore to machines, smelts it into ingots, packs an order into a box and delivers it before the order timer runs out. Ice, oil and lava floors get in the way. Solo prototype, Blueprints only.</span></p>
+
+    <article class="order">
+      <div class="order-head">
+        <dl>
+          <div><dt>Engine</dt><dd>UE 5.5</dd></div>
+          <div><dt data-l="ru">Роль</dt><dt data-l="en">Role</dt><dd data-l="ru">всё, соло</dd><dd data-l="en">everything, solo</dd></div>
+          <div><dt data-l="ru">Код</dt><dt data-l="en">Code</dt><dd>100% Blueprints</dd></div>
+          <div><dt data-l="ru">Версия</dt><dt data-l="en">Version</dt><dd>0.0.2</dd></div>
+        </dl>
+      </div>
+      <figure>
+        <video src="gameplay.mp4" controls playsinline preload="metadata"></video>
+        <figcaption><span data-l="ru">Геймплей версии 0.0.2. Графика пока прототипная.</span><span data-l="en">Gameplay of version 0.0.2. Art is still prototype.</span></figcaption>
+      </figure>
+
+      <div class="order-body">
+        <div class="loop" aria-label="Core loop">
+          <b data-l="ru">заказ</b><b data-l="en">order</b><span>→</span>
+          <b data-l="ru">руда</b><b data-l="en">ore</b><span>→</span>
+          <b data-l="ru">плавильня</b><b data-l="en">smelter</b><span>→</span>
+          <b data-l="ru">слиток</b><b data-l="en">ingot</b><span>→</span>
+          <b data-l="ru">коробка</b><b data-l="en">box</b><span>→</span>
+          <b data-l="ru">точка сдачи</b><b data-l="en">delivery</b><span>→</span>
+          <b data-l="ru">очки</b><b data-l="en">score</b>
+        </div>
+
+        <h3 data-l="ru">Сдача заказа</h3><h3 data-l="en">Order delivery</h3>
+        <div class="graph" role="img" aria-label="Blueprint chain of BP_DeliveryZone">
+          <div class="chain">
+            <div class="node ev"><div class="h">ActorBeginOverlap</div><div class="b">Other Actor</div></div><div class="wire"></div>
+            <div class="node"><div class="h">Cast To BP_OrderBox</div><div class="b">bIsHeld = false</div></div><div class="wire"></div>
+            <div class="node fn"><div class="h">FindMatchingOrder</div><div class="b">StoredItems → bFound</div></div><div class="wire"></div>
+            <div class="node fn"><div class="h">CalculateItemsValue</div><div class="b">Score +=</div></div><div class="wire"></div>
+            <div class="node fn"><div class="h">RemoveOrderByID</div><div class="b">OrderID</div></div><div class="wire"></div>
+            <div class="node"><div class="h">Clear + Refresh UI</div><div class="b">Box widget, ScoreText</div></div>
+          </div>
+        </div>
+        <p class="graph-note"><span data-l="ru">Точка сдачи сравнивает содержимое коробки с активными заказами. Нашёлся заказ: начисляются очки и заказ закрывается. Не нашёлся: коробка очищается.</span><span data-l="en">The delivery zone compares the box contents with active orders. If an order matches, score is added and the order closes. If not, the box is emptied.</span></p>
+
+        <h3 data-l="ru">Машина принимает предмет</h3><h3 data-l="en">Machine accepts an item</h3>
+        <div class="graph" role="img" aria-label="Blueprint chain of BP_MasterMachine TryAcceptItem">
+          <div class="chain">
+            <div class="node ev"><div class="h">BeginOverlap</div><div class="b">BP_MasterItem</div></div><div class="wire"></div>
+            <div class="node fn"><div class="h">CanAcceptItem</div><div class="b">Recipe input?</div></div><div class="wire"></div>
+            <div class="node fn"><div class="h">AddStoredItem</div><div class="b">ItemData, +1</div></div><div class="wire"></div>
+            <div class="node"><div class="h">SetLifeSpan 0.05</div><div class="b">+ disable collision</div></div><div class="wire"></div>
+            <div class="node fn"><div class="h">CheckAndStartProcessing</div><div class="b">Timer → output</div></div>
+          </div>
+        </div>
+        <p class="graph-note"><span data-l="ru">Все машины наследуются от BP_MasterMachine. Плавильня отличается только Data Asset с рецептами.</span><span data-l="en">All machines inherit from BP_MasterMachine. The smelter differs only by its recipe Data Asset.</span></p>
+
+        <h3 data-l="ru">Решения</h3><h3 data-l="en">Decisions</h3>
+        <div class="decisions">
+          <div class="decision"><strong data-l="ru">Контент в данных</strong><strong data-l="en">Content as data</strong>
+            <p data-l="ru">Предметы, рецепты, машины и пулы заказов лежат в Primary Data Assets. Новый слиток или рецепт добавляется без новой логики.</p>
+            <p data-l="en">Items, recipes, machines and order pools are Primary Data Assets. A new ingot or recipe needs no new logic.</p></div>
+          <div class="decision"><strong data-l="ru">Без Event Tick</strong><strong data-l="en">No Event Tick</strong>
+            <p data-l="ru">Машины и менеджер заказов работают на таймерах. Счёт и коробка обновляют UI только по событию, без биндингов каждый кадр.</p>
+            <p data-l="en">Machines and the order manager run on timers. Score and box UI update only on events, with no per-frame bindings.</p></div>
+          <div class="decision"><strong data-l="ru">Интерфейсы</strong><strong data-l="en">Interfaces</strong>
+            <p data-l="ru">Взаимодействие идёт через BPI_Interact и BPI_OpenMenu. Персонажу не нужно знать класс объекта.</p>
+            <p data-l="en">Interaction goes through BPI_Interact and BPI_OpenMenu. The character does not need to know the object's class.</p></div>
+          <div class="decision"><strong data-l="ru">Баланс в одном месте</strong><strong data-l="en">Tuning in one place</strong>
+            <p data-l="ru">Число предметов в заказе, время на предмет и лимит заказов настраиваются в Data Asset уровня.</p>
+            <p data-l="en">Items per order, time per item and the active order limit are set in the level's Data Asset.</p></div>
+        </div>
+
+        <div class="fix">
+          <span class="label" data-l="ru">Разбор бага</span><span class="label" data-l="en">Bug breakdown</span>
+          <p data-l="ru"><strong>Pending kill при броске.</strong> Брошенный предмет включал коллизию, коробка или машина сразу забирала его и вызывала Destroy Actor. Код броска ещё выполнялся и обращался к удалённым компонентам. Решение: предмет отключает коллизию и исчезает через Set Life Span 0.05. Бросок успевает завершиться, и предмет не засчитывается дважды.</p>
+          <p data-l="en"><strong>Pending kill on throw.</strong> A thrown item enabled its collision, and the box or machine grabbed it at once and called Destroy Actor. The throw code was still running and touched destroyed components. Fix: the item disables collision and is removed with Set Life Span 0.05. The throw finishes, and the item cannot be counted twice.</p>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section>
+    <span class="label" data-l="ru">Ещё</span><span class="label" data-l="en">More</span>
+    <div class="side">
+      <div class="card">
+        <span class="status" data-l="ru">в работе</span><span class="status" data-l="en">in progress</span>
+        <h3>RTS FFA prototype</h3>
+        <p data-l="ru">Стратегия в духе Warcraft III, режим каждый за себя. Сделана RTS-камера:</p>
+        <p data-l="en">A Warcraft III–style strategy, free-for-all mode. The RTS camera is done:</p>
+        <ul data-l="ru"><li>плавный зум колесом через Lerp</li><li>наклон 45–50° вверху и 30–35° внизу</li><li>Enhanced Input, свой Player Controller и Game Mode</li></ul>
+        <ul data-l="en"><li>smooth wheel zoom with Lerp</li><li>pitch 45–50° at the top, 30–35° at the bottom</li><li>Enhanced Input, custom Player Controller and Game Mode</li></ul>
+      </div>
+      <div class="card">
+        <h3 data-l="ru">Сейчас изучаю</h3><h3 data-l="en">Learning now</h3>
+        <ul data-l="ru"><li>Текстурирование и PBR-материалы</li><li>Репликация в Blueprints для кооператива в Industrial Chaos</li></ul>
+        <ul data-l="en"><li>Texturing and PBR materials</li><li>Blueprint replication for Industrial Chaos co-op</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <footer><span><span data-l="ru">Даниил</span><span data-l="en">Daniil</span> · Blueprint Developer</span><span data-l="ru">Открыт к стажировке и junior-позиции</span><span data-l="en">Open to internship and junior roles</span></footer>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement, ru=document.getElementById('btn-ru'), en=document.getElementById('btn-en');
+  function set(l){root.lang=l;ru.setAttribute('aria-pressed',l==='ru');en.setAttribute('aria-pressed',l==='en');try{localStorage.setItem('lang',l)}catch(e){}}
+  var saved=null;try{saved=localStorage.getItem('lang')}catch(e){}
+  set(location.hash==='#en'?'en':location.hash==='#ru'?'ru':(saved||'ru'));
+  ru.onclick=function(){set('ru')};en.onclick=function(){set('en')};
+  window.addEventListener('hashchange',function(){if(location.hash==='#en')set('en');if(location.hash==='#ru')set('ru')});
+  document.querySelectorAll('.copy').forEach(function(b){b.onclick=function(){
+    var el=document.getElementById(b.dataset.copy),t=el.textContent;
+    function sel(){var r=document.createRange();r.selectNodeContents(el);var s=getSelection();s.removeAllRanges();s.addRange(r)}
+    if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='ok'},sel)}else sel();
+  }});
+})();
+</script>
+</body></html>
